@@ -20,9 +20,9 @@ definition(
     author: "Stephan Hackett",
     description: "Configure Voice Commands for your Sonos speakers",
     category: "My Apps",
-    iconUrl: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/sonoslink.png",
-    iconX2Url: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/sonoslink.png",
-    iconX3Url: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/sonoslink.png")
+    iconUrl: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/sonosVC.png",
+    iconX2Url: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/sonosVC.png",
+    iconX3Url: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/sonosVC.png")
 	
     
 
@@ -40,13 +40,24 @@ def mainPage(){
        		href (name: "aboutPage", 
        		title: "Sonos Voice Commander\nVersion 0.1.20170504", 
        		description: "Tap for User's Guide and Info.",
-       		image: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/sonoslink.png",
+       		image: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/sonosVC.png",
        		required: false,
        		page: "aboutPage"
  	   		)
     	}
   
   	}
+}
+
+def installed(){
+	initialize()
+}
+
+def updated(){
+	initialize()
+}
+
+def initialize(){
 }
 
 def aboutPage() {
