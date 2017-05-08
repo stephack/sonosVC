@@ -27,9 +27,9 @@ definition(
     description: "Child App Generator for Voice Commander - DO NOT PUBLISH!!",
     category: "My Apps",
     parent: "stephack:Sonos Voice Commander",
-    iconUrl: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/sonoslink.png",
-    iconX2Url: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/sonoslink.png",
-    iconX3Url: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/sonoslink.png"
+    iconUrl: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/child.png",
+    iconX2Url: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/child.png",
+    iconX3Url: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/child.png"
 )
 
 preferences {
@@ -41,10 +41,10 @@ preferences {
 def chooseSpeaker(){
 	dynamicPage(name:"chooseSpeaker",uninstall:true){
     	section("Speaker to control with Virtual Devices") {
-        	input "sonos", "capability.musicPlayer", title: "Please choose Speaker", multiple:false, required: true, image: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/sonosb.png"            
+        	input "sonos", "capability.musicPlayer", title: "Please Choose Speaker", multiple:false, required: true, image: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/sp.png"            
         }
         section("Create Virtual Speaker") {
-        	input "vSpeaker", "text", title: "Create Virtual Speaker", description: "Enter VSP name here", multiple: false, required: true, image: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/vs3.png"
+        	input "vSpeaker", "text", title: "Create Virtual Speaker", description: "Enter VSP name here", multiple: false, required: true, image: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/vs.png"
             input "makeVPL", "bool", title: "Create Virtual Playlists?", submitOnChange: true
         }
         
@@ -57,7 +57,7 @@ def chooseSpeaker(){
 def choosePlaylists(){	
 	dynamicPage(name: "choosePlaylists") {        
     	section{
-            input "commTotal", "number", title: "# of VPL's to create", description:"Enter number: (1-5)", multiple: false, submitOnChange: true, required: true, image: "https://cdn.rawgit.com/stephack/MyLutron/master/resources/images/playlist.png", range: "1..5"
+            input "commTotal", "number", title: "# of VPL's to create", description:"Enter number: (1-5)", multiple: false, submitOnChange: true, required: true, image: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/pl.png", range: "1..5"
         }        
         if(commTotal && commTotal>=1 && commTotal<=5){
         	for(i in 1..commTotal) {
@@ -105,6 +105,10 @@ def confirmOptions(){
        			}
           	}       	
         }
+        section("Advanced Options", hideable: true, hidden: true) {
+        	input "listInThings", "bool", title: "Hide Virtual Devices in Things View?",description: "Hidden by default", defaultValue: true
+            //paragragh "Only change this for advanced troubleshooting"
+        }
 	}
 }
 
@@ -131,6 +135,9 @@ def updated() {
     		deleteVPL("${i}")
         }
     }
+    if(listInThings!=state.OldListInThings){ //start rebuild if listInThings value has changed
+    	deleteAllChildren()
+    }
     initialize()
 }
 
@@ -149,7 +156,8 @@ def initialize() {
     	deleteVPL("all")
     }
 	subscribe(sonos, "status", setVsp)
- 	subscribe(sonos, "level", setVspVol)    
+ 	subscribe(sonos, "level", setVspVol)
+    state.OldListInThings = listInThings
     log.debug "Initialization Complete"
 }
 
@@ -163,7 +171,7 @@ def createVSP(){
        	}        
         if (!childDevice) {
             childDevice = addChildDevice("stephack", "Virtual Speaker", "VSP_${app.id}", null,[completedSetup: true,
-            label: vSpeaker, isComponent: false, componentName: vSpeaker, componentLabel: vSpeaker]) 
+            label: vSpeaker, isComponent: listInThings, componentName: vSpeaker, componentLabel: vSpeaker]) 
             childDevice.refresh()            
             log.info "Creating VSP [${childDevice}]"            
 		}
@@ -182,7 +190,7 @@ def createVPL() {
        	}        
         if (!childDevice) {
             childDevice = addChildDevice("stephack", "Virtual Speaker", "VPL_${app.id}-${i}", null,[completedSetup: true,
-            label: currVPL, isComponent: false, componentName: currVPL, componentLabel: currVPL, "data":["vpl":"${i}"]]) 
+            label: currVPL, isComponent: listInThings, componentName: currVPL, componentLabel: currVPL, "data":["vpl":"${i}"]]) 
             childDevice.refresh()            
             log.info "Creating VPL${i} [${childDevice}]"            
 		}
@@ -221,6 +229,16 @@ def deleteVPL(which){	//removes unneeded VPL starting with the highest number go
    // }
    // app.updateSetting("commTotal", "")
         
+}
+
+def deleteAllChildren(){ //deletes all children when switches fron isComponent true to false or vice versa
+	def childDevice = getAllChildDevices()       	
+        if (childDevice) {
+        	log.info "Deleting all child Devices"
+        	childDevice.each {child->
+  				deleteChildDevice(child.deviceNetworkId)            
+    		}
+        }
 }
 
 def refresh(dni) {
