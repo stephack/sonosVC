@@ -17,7 +17,7 @@
  * as the foundation of the code for retrieving and storing the recently played sation from the Sonos speakers.
  */
 
-
+def version() {return "0.1.20170529"}
 
 definition(
     name: "Sonos Voice Commander",
@@ -53,15 +53,15 @@ def parentPage() {
         section("Installed Voice Commands") {
             app(name: "childApps", appName: appName(), namespace: "stephack", title: "Create New Voice Command", multiple: true)
         }
-       // section("Version Info & User's Guide") {
-       //		href (name: "aboutPage", 
-       //		title: "Sonos Voice Commander\nVersion 0.1.20170504", 
-       //		description: "Tap for User's Guide and Info.",
-       //		image: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/sonosVC.png",
-       //		required: false,
-       //		page: "aboutPage"
- 	   //		)
-      //	}
+        section("Version Info & User's Guide") {
+       		href (name: "aboutPage", 
+       		title: "Sonos Voice Commander\nver "+version(), 
+       		description: "Tap for User's Guide and Info.",
+       		image: "https://cdn.rawgit.com/stephack/sonosVC/master/resources/images/sonosVC.png",
+       		required: false,
+       		page: "aboutPage"
+ 	   		)
+      	}
     }
 }
 
