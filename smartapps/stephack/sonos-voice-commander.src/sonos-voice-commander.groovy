@@ -14,10 +14,10 @@
  *
  *	 
  * Speacial Thanks to @GuyInATie for allowing me to use snippets from his Sonos Remote Control smartApp. They were used
- * as the foundation of the code for retrieving and storing the recently played sation from the Sonos speakers.
+ * as the foundation of the code for retrieving and storing the recently played station from the Sonos speakers.
  */
 
-def version() {return "0.1.20170529"}
+def version() {return "0.1.20170531"}
 
 definition(
     name: "Sonos Voice Commander",
@@ -104,13 +104,13 @@ def choosePlaylists(){
 
 def confirmOptions(){
 	dynamicPage(name:"confirmOptions",install:true, uninstall:true){    
-		section("Speaker being Controlled"){
+		section("Speaker Being Controlled"){
         		paragraph "${sonos}"
 		}
 		if(vSpeaker){
     		section("Virtual Speaker - Voice Commands"){
         		paragraph "'Alexa, turn on/off ${vSpeaker}'\n"+
-        		"'Alexa, set the ${vSpeaker} to 25%'\n\n"+
+        		"'Alexa, set ${vSpeaker} to 25%'\n\n"+
                 "If these commands don't roll off the tough, consider changing the name of your Virtual Speaker.\n\n"+
                 "For any Virtual Playlists listed below, consider the same but focus on the 'ON' command. Use the Virtual Speaker name to control volume and turn off the speaker.\n"
         	}
@@ -135,8 +135,9 @@ def confirmOptions(){
           	}       	
         }
         section("Advanced Options", hideable: true, hidden: true) {
-        	input "listInThings", "bool", title: "Hide Virtual Devices in Things View?",description: "Hidden by default", defaultValue: true
-            //paragragh "Only change this for advanced troubleshooting"
+         
+        	input "listInThings", "bool", title: "Hide Virtual Devices in Things View?\n\n(Hidden By Default)\nOnly change this for advanced troubleshooting.",description: "Hidden by default", defaultValue: true
+            //
         }
 	}
 }
